@@ -777,6 +777,9 @@ window.addEventListener('load', ()=>{
     window.innerHeight / baseHeight
   );
 
+    scaleApp();
+window.addEventListener('resize', scaleApp);
+
   app.style.transform =
     `translate(-50%, -50%) scale(${scale})`;
 
