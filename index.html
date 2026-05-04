@@ -772,27 +772,14 @@ window.addEventListener('load', ()=>{
   const baseWidth = 3840;
   const baseHeight = 2160;
 
-  const windowWidth = window.innerWidth;
-  const windowHeight = window.innerHeight;
+  const scale = Math.min(
+    window.innerWidth / baseWidth,
+    window.innerHeight / baseHeight
+  );
 
-  const scaleX = windowWidth / baseWidth;
-  const scaleY = windowHeight / baseHeight;
+  app.style.transform =
+    `translate(-50%, -50%) scale(${scale})`;
 
-  // 🔥 USE MAX instead of MIN (fills entire screen)
-  const scale = Math.max(scaleX, scaleY);
-
-  app.style.width = baseWidth + 'px';
-  app.style.height = baseHeight + 'px';
-
-  app.style.transform = `scale(${scale})`;
-  app.style.transformOrigin = 'top left';
-
-  const scaledWidth = baseWidth * scale;
-  const scaledHeight = baseHeight * scale;
-
-  // center properly
-  app.style.left = (windowWidth - scaledWidth) / 2 + 'px';
-  app.style.top = (windowHeight - scaledHeight) / 2 + 'px';
 }
 
   window.addEventListener('resize', scaleApp);
