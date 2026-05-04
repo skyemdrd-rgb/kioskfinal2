@@ -3,6 +3,254 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MSC Kiosk</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, sans-serif;
+}
+
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:black;
+}
+
+/* LOADER */
+#loader{
+  position:fixed;
+  inset:0;
+  background:black;
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:50px;
+  z-index:9999;
+}
+
+/* APP */
+#app{
+  position:absolute;
+  width:3840px;
+  height:2160px;
+  left:50%;
+  top:50%;
+  transform-origin:center center;
+}
+
+/* SCREENS */
+.screen{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .3s ease;
+}
+
+.screen.active{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* BACKGROUND */
+.background, video{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+/* HOTSPOTS */
+.hotspot{
+  position:absolute;
+  z-index:10;
+  cursor:pointer;
+}
+
+/* MAIN BUTTONS */
+.home{ left:14%; width:22%; height:24%; bottom:0; }
+.guide{ left:38%; width:25%; height:24%; bottom:0; }
+.about{ left:64%; width:24%; height:24%; bottom:0; }
+
+.startHotspot{ inset:0; }
+
+.backHome{
+  right:0;
+  bottom:0;
+  width:6%;
+  height:10%;
+}
+
+.bigbackHome{
+  right:0;
+  bottom:3%;
+  width:11%;
+  height:16%;
+}
+
+/* CLINICS GRID */
+.dentalBtn{ top:22%; left:12%; width:24%; height:16%; }
+.entBtn{ top:22%; left:38%; width:24%; height:16%; }
+.obBtn{ top:22%; left:64%; width:24%; height:16%; }
+
+.pediaBtn{ top:43%; left:12%; width:24%; height:16%; }
+.radioBtn{ top:43%; left:38%; width:24%; height:16%; }
+.rehabBtn{ top:43%; left:64%; width:24%; height:16%; }
+
+.internalBtn{ top:64%; left:12%; width:24%; height:16%; }
+.ophthaBtn{ top:64%; left:38%; width:24%; height:16%; }
+.surgeryBtn{ top:64%; left:64%; width:24%; height:16%; }
+
+/* INTERNAL NAV */
+.internalNext{ right:0; bottom:10%; width:6%; height:8%; }
+.internalPrev{ right:0; bottom:20%; width:6%; height:8%; }
+
+</style>
+</head>
+
+<body>
+
+<div id="loader">Loading...</div>
+
+<div id="app">
+
+<!-- START -->
+<div id="startScreen" class="screen active">
+  <video autoplay muted loop playsinline>
+    <source src="idle.mp4">
+  </video>
+  <div class="hotspot startHotspot" onclick="goHome()"></div>
+</div>
+
+<!-- HOME -->
+<div id="homeScreen" class="screen">
+  <div class="background" style="background:url('home.png') center/cover"></div>
+
+  <div class="hotspot home" onclick="goHome()"></div>
+  <div class="hotspot guide" onclick="goGuide()"></div>
+  <div class="hotspot about" onclick="showScreen('aboutScreen')"></div>
+</div>
+
+<!-- ABOUT -->
+<div id="aboutScreen" class="screen">
+  <div class="background" style="background:url('about.jpg') center/cover"></div>
+  <div class="hotspot backHome" onclick="goHome()"></div>
+</div>
+
+<!-- GUIDE -->
+<div id="guideScreen" class="screen">
+  <div class="background" style="background:url('guide.jpg') center/cover"></div>
+
+  <div class="hotspot bigbackHome" onclick="goHome()"></div>
+  <div class="hotspot clinic" onclick="showScreen('clinicsScreen')"></div>
+</div>
+
+<!-- CLINICS -->
+<div id="clinicsScreen" class="screen">
+  <div class="background" style="background:url('clinics.png') center/cover"></div>
+
+  <div class="hotspot bigbackHome" onclick="goGuide()"></div>
+
+  <div class="hotspot dentalBtn" onclick="showScreen('dentistryScreen')"></div>
+  <div class="hotspot entBtn" onclick="showScreen('entScreen')"></div>
+  <div class="hotspot obBtn" onclick="showScreen('obgyneScreen')"></div>
+
+  <div class="hotspot pediaBtn" onclick="showScreen('pediatricsScreen')"></div>
+  <div class="hotspot radioBtn" onclick="showScreen('radiationScreen')"></div>
+  <div class="hotspot rehabBtn" onclick="showScreen('rehabScreen')"></div>
+
+  <div class="hotspot internalBtn" onclick="showScreen('internalMedicineScreen')"></div>
+  <div class="hotspot ophthaBtn" onclick="showScreen('ophthalmologyScreen')"></div>
+  <div class="hotspot surgeryBtn" onclick="showScreen('surgeryScreen')"></div>
+</div>
+
+<!-- REHAB -->
+<div id="rehabScreen" class="screen">
+  <div class="background" style="background:url('rehab.png') center/cover"></div>
+  <div class="hotspot backHome" onclick="showScreen('clinicsScreen')"></div>
+</div>
+
+<!-- INTERNAL PAGE 1 -->
+<div id="internalMedicineScreen" class="screen">
+  <div class="background" style="background:url('internal1.png') center/cover"></div>
+  <div class="hotspot internalNext" onclick="showScreen('internalMedicineScreen2')"></div>
+  <div class="hotspot backHome" onclick="showScreen('clinicsScreen')"></div>
+</div>
+
+<!-- INTERNAL PAGE 2 -->
+<div id="internalMedicineScreen2" class="screen">
+  <div class="background" style="background:url('internal2.png') center/cover"></div>
+  <div class="hotspot internalPrev" onclick="showScreen('internalMedicineScreen')"></div>
+  <div class="hotspot backHome" onclick="showScreen('clinicsScreen')"></div>
+</div>
+
+</div>
+
+<script>
+
+window.addEventListener('load', () => {
+
+  const app = document.getElementById('app');
+  const loader = document.getElementById('loader');
+  const screens = document.querySelectorAll('.screen');
+
+  /* SCALE */
+  function scaleApp(){
+    const scale = Math.min(
+      window.innerWidth / 3840,
+      window.innerHeight / 2160
+    );
+
+    app.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  }
+
+  scaleApp();
+  window.addEventListener('resize', scaleApp);
+
+  /* SCREEN NAV */
+  window.showScreen = function(id){
+    screens.forEach(s => s.classList.remove('active'));
+    document.getElementById(id)?.classList.add('active');
+    resetIdle();
+  };
+
+  window.goHome = () => showScreen('homeScreen');
+  window.goGuide = () => showScreen('guideScreen');
+
+  /* IDLE TIMER */
+  let timer;
+
+  function resetIdle(){
+    clearTimeout(timer);
+    timer = setTimeout(()=>{
+      showScreen('startScreen');
+    }, 30000);
+  }
+
+  ['mousemove','mousedown','touchstart','click']
+    .forEach(e => document.addEventListener(e, resetIdle));
+
+  resetIdle();
+
+  /* DONE */
+  loader.style.display = 'none';
+
+});
+
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MSC Kiosk Directory</title>
 
 <style>
