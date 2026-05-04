@@ -21,12 +21,22 @@ html,body{
   background:#edf1f5;
 }
 
+body{
+  margin:0;
+  overflow:hidden;
+  background:black;
+}
+
 #app{
   position:absolute;
   width:3840px;
   height:2160px;
-  
   overflow:hidden;
+
+  top:50%;
+  left:50%;
+
+  transform-origin:center center;
 }
 
 #loader{
@@ -796,26 +806,23 @@ window.addEventListener('load', ()=>{
       ((windowHeight - scaledHeight) / 2) + 'px';
   }
 
-  scaleApp();
+  function scaleApp(){
 
-  window.addEventListener('resize', scaleApp);
+  const baseWidth = 3840;
+  const baseHeight = 2160;
 
-  /* =========================
-     SCREEN NAVIGATION
-  ========================= */
+  const windowWidth = window.innerWidth;
+  const windowHeight = window.innerHeight;
 
-  window.showScreen = function(id){
+  const scale = Math.min(
+    windowWidth / baseWidth,
+    windowHeight / baseHeight
+  );
 
-    screens.forEach(screen=>{
-      screen.classList.remove('active');
-    });
+  app.style.transform =
+    `translate(-50%, -50%) scale(${scale})`;
 
-    const target = document.getElementById(id);
-
-    if(target){
-      target.classList.add('active');
-    }
-  };
+}
 
   window.goHome = function(){
     showScreen('homeScreen');
